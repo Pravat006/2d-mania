@@ -18,7 +18,7 @@ model User {
   position    Json      // { x: Number, y: Number } - Live user position in the map
 }
 
-model Map {
+ model Map {
   id          String   @id @default(uuid())
   name        String
   createdBy   String
@@ -70,11 +70,19 @@ model Room {
 /// ✅ **Objects in the Map (Furniture, Portals, etc.)**
 model Object {
   id       String  @id @default(uuid())
-  type     String  // Example: "chair", "portal", "table"
+ 
   content  String? // Optional additional data (e.g., a URL for a portal)
   position Json    // { x: Number, y: Number } - Object's position in the map
   mapId    String
   map      Map     @relation(fields: [mapId], references: [id], onDelete: Cascade)
+ 
+  name       String    // Object name (e.g., "Chair", "Player", "Door")
+     
+  size       Json    // Optional name for the object
+  collidable Boolean   @default(false) // If true, can collide
+  interactive Boolean  @default(false) // If true, players can interact with it
+  interactionType String // Type of interaction (e.g., "sit", "open", "pickup")
+
 }
 
 /// ✅ **Spawn Points (Where Users Appear in the Map)**
@@ -90,3 +98,4 @@ enum Role {
   ADMIN
   USER
 }
+
