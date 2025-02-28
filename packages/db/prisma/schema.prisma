@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-//Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,6 +8,85 @@ datasource db {
 }
 
 model User {
+  id          String    @id @default(uuid())
+  name        String
+  email       String    @unique
+  role        Role      @default(USER)
+  maps        MapUser[] // Many-to-many relation with Map
+  mapsCreated Map[]     @relation("UserMaps") // Maps created by this user
+  rooms       RoomUser[] // Many-to-many relation with Room
+  position    Json      // { x: Number, y: Number } - Live user position in the map
+}
 
-  
+model Map {
+  id          String   @id @default(uuid())
+  name        String
+  createdBy   String
+  admin       User     @relation("UserMaps", fields: [createdBy], references: [id], onDelete: Cascade)
+  width       Int      // Width of the map in pixels
+  height      Int      // Height of the map in pixels
+  objects     Object[] // Objects inside the map
+  spawnPoints SpawnPoint[] // Spawn points for players
+  tilemap     Json?    // JSON-based tilemap for rendering in PixiJS
+  users       MapUser[] // Users present in the map
+  rooms       Room[] // Private rooms dynamically created
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+/// ✅ **Many-to-Many Relation Table (Users ↔ Maps)**
+model MapUser {
+  userId  String
+  mapId   String
+  user    User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  map     Map  @relation(fields: [mapId], references: [id], onDelete: Cascade)
+
+  joinedAt DateTime @default(now())
+
+  @@id([userId, mapId]) // Composite primary key
+}
+
+/// ✅ **Many-to-Many Relation Table (Users ↔ Rooms)**
+model RoomUser {
+  id        String   @id @default(uuid())
+  userId    String
+  roomId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  joinedAt  DateTime @default(now()) // Time the user joined the room
+
+  @@unique([userId, roomId]) // Ensure each user joins a room only once
+}
+
+model Room {
+  id       String   @id @default(uuid())
+  mapId    String
+  map      Map      @relation(fields: [mapId], references: [id], onDelete: Cascade)
+  users    RoomUser[] // Many-to-many relation with User
+  position Json     // { x: Number, y: Number } - The zone where the room was created
+  createdAt DateTime @default(now())
+}
+
+/// ✅ **Objects in the Map (Furniture, Portals, etc.)**
+model Object {
+  id       String  @id @default(uuid())
+  type     String  // Example: "chair", "portal", "table"
+  content  String? // Optional additional data (e.g., a URL for a portal)
+  position Json    // { x: Number, y: Number } - Object's position in the map
+  mapId    String
+  map      Map     @relation(fields: [mapId], references: [id], onDelete: Cascade)
+}
+
+/// ✅ **Spawn Points (Where Users Appear in the Map)**
+model SpawnPoint {
+  id     String  @id @default(uuid())
+  x      Int
+  y      Int
+  mapId  String
+  map    Map     @relation(fields: [mapId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  ADMIN
+  USER
 }
