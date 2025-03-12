@@ -2,6 +2,7 @@ import  express from 'express';
 import { router } from './routes/v0/index';
 
 
+import client from "@repo/db/src/index";
 
 
 const app = express();

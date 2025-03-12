@@ -71,6 +71,7 @@ model Room {
 model Object {
   id       String  @id @default(uuid())
  
+ 
   content  String? // Optional additional data (e.g., a URL for a portal)
   position Json    // { x: Number, y: Number } - Object's position in the map
   mapId    String
