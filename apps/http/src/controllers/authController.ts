@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 
-import client from "@repo/db/src/index" 
 import { GoogleAuthSchema } from "../types/zschemas";
+import client from "@repo/db/client";
 
 export const googleAuth = async (req: Request, res: Response) => {
   try {

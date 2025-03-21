@@ -2,13 +2,16 @@ import { Router } from "express";
 import { userRouter } from "./user.route";
 import { mapRouter } from "./map.route";
 import { adminRouter } from "./admin.route";
+import { googleAuth } from "../../controllers/authController";
 
 export  const router = Router();
 
-router.post("/signup", (req, res) => {
-    res.json({ message: "Signup route" });
-});
-
+router.post("/googleAuth", googleAuth)
+  
+router.get("/", (req, res) => {
+    res.status(200).json({ message: "Welcome to the API" });    
+}
+);
 
 
 router.use("/user", userRouter);
