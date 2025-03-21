@@ -17,7 +17,8 @@ model User {
   maps        MapUser[] // Many-to-many relation with Map
   mapsCreated Map[]     @relation("UserMaps") // Maps created by this user
   rooms       RoomUser[] // Many-to-many relation with Room
-  position    Json      // { x: Number, y: Number } - Live user position in the map
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
  model Map {
@@ -43,10 +44,13 @@ model MapUser {
   user    User @relation(fields: [userId], references: [id], onDelete: Cascade)
   map     Map  @relation(fields: [mapId], references: [id], onDelete: Cascade)
 
+  position Json    // { x: Number, y: Number } - User's position in the map
+
   joinedAt DateTime @default(now())
 
-  @@id([userId, mapId]) // Composite primary key
+  @@id([userId, mapId]) // ✅ Composite primary key (Correct syntax)
 }
+
 
 /// ✅ **Many-to-Many Relation Table (Users ↔ Rooms)**
 model RoomUser {

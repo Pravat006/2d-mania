@@ -1,6 +1,13 @@
 import { z } from "zod"  
 
 
+export const GoogleAuthSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email"),
+  avatar: z.string().url("Invalid avatar URL"),
+});
+
+
 export const CreateMapSchema = z.object({
     name: z.string(),
     admin: z.string(),
