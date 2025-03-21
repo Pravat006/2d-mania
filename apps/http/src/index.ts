@@ -22,3 +22,14 @@ app.listen(process.env.PORT || 8000 , () => {
 });
 
 
+declare global {
+  namespace Express {
+    interface Request {
+        user: {
+            role: "ADMIN" | "USER";
+            userId: string;
+        };
+     
+    }
+  }
+}
