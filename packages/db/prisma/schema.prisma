@@ -3,6 +3,7 @@ generator client {
 }
 
 datasource db {
+
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
@@ -11,6 +12,7 @@ model User {
   id          String    @id @default(uuid())
   name        String
   email       String    @unique
+  avatar      String?   // URL to the user's avatar
   role        Role      @default(USER)
   maps        MapUser[] // Many-to-many relation with Map
   mapsCreated Map[]     @relation("UserMaps") // Maps created by this user

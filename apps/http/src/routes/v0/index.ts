@@ -5,6 +5,10 @@ import { adminRouter } from "./admin.route";
 
 export  const router = Router();
 
+router.post("/signup", (req, res) => {
+    res.json({ message: "Signup route" });
+});
+
 
 
 router.use("/user", userRouter);
